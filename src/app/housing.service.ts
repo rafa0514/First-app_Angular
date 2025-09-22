@@ -1,10 +1,12 @@
 import {Injectable} from '@angular/core';
 import { HousingLocation } from './housing-location';
+
 @Injectable({
   providedIn: 'root',
 })
 export class HousingService {
-  readonly baseUrl = 'https://angular.dev/assets/images/tutorials/common';
+  /*para usarlo sin el json server /home component.ts /housing.service.ts /details.component.ts*/
+  /*readonly baseUrl = 'https://angular.dev/assets/images/tutorials/common';
 
   protected housingLocationList: HousingLocation[] = [
     {
@@ -107,13 +109,38 @@ export class HousingService {
       wifi: true,
       laundry: true,
     },
-  ];
+  ];*/
 
-  getAllHousingLocations(): HousingLocation[] {
+  /*
+  Instalar json-server: >npm install -g json-server
+  Se crea el archivo db.json en la raiz del proyecto con los datos
+  Se corre el json server: >json-server --watch db.json
+  */
+  url = 'http://localhost:3000/locations';
+
+  /*getAllHousingLocations(): HousingLocation[] {
     return this.housingLocationList;
+  }*/
+
+  async getAllHousingLocations(): Promise<HousingLocation[]> {
+    const data = await fetch(this.url);
+    return (await data.json()) ?? [];
   }
   
-  getHousingLocationById(id: number): HousingLocation | undefined {
+  /*getHousingLocationById(id: number): HousingLocation | undefined {
     return this.housingLocationList.find((housingLocation) => housingLocation.id === id);
+  }*/
+
+  async getHousingLocationById(id: number): Promise<HousingLocation | undefined> {
+    const data = await fetch(`${this.url}?id=${id}`);
+    const locationJson = await data.json();
+    return locationJson[0] ?? {};
+  }
+
+  submitApplication(firstName: string, lastName: string, email: string) {
+    /*console.log(
+      `Homes application received: firstName: ${firstName}, lastName: ${lastName}, email: ${email}.`,
+    );*/
+    console.log(firstName, lastName, email);
   }
 }
